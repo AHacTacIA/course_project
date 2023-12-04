@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import multer from 'multer';
 
 import {registerValidation, loginValidation, recipeCreateValidation} from './validations.js';
 import checkAuth from './utils/checkAuth.js';
@@ -12,6 +13,8 @@ mongoose
 
 const app = express();
 
+
+
 app.use(express.json());
 
 
@@ -19,11 +22,11 @@ app.post('/auth/register', registerValidation, UserController.register);
 app.post('/auth/login', loginValidation, UserController.login);
 app.get('/auth/me', checkAuth, UserController.getMe);
 
-// app.get('/recipes', RecipeController.getAll);
-// app.get('/recipes/:id', RecipeController.getOne);
+app.get('/recipes', RecipeController.getAll);
+app.get('/recipes/:id', RecipeController.getOne);
 app.post('/recipes', checkAuth, recipeCreateValidation,RecipeController.create);
-// app.delete('/recipes', RecipeController.remove);
-// app.patch('/recipes', RecipeController.update);
+app.delete('/recipes/:id', checkAuth, RecipeController.remove);
+app.patch('/recipes/:id', checkAuth, RecipeController.update);
 
 app.listen(4444,(err) => {
     if (err){
