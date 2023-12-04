@@ -3,9 +3,8 @@ import mongoose from 'mongoose';
 import multer from 'multer';
 
 import {registerValidation, loginValidation, recipeCreateValidation} from './validations.js';
-import checkAuth from './utils/checkAuth.js';
-import * as UserController from './controllers/userController.js';
-import * as RecipeController from './controllers/recipeController.js';
+import {checkAuth, handleValidationsErrors} from './utils/index.js';
+import { UserController, RecipeController} from './controllers/index.js';
 mongoose
     .connect('mongodb+srv://admin:9999999@cluster0.ytbgb2f.mongodb.net/blog?retryWrites=true&w=majority')
     .then(() => console.log('DB ok'))
@@ -13,20 +12,37 @@ mongoose
 
 const app = express();
 
+const storage = multer.diskStorage({
+    destination: (_, __, cb) =>{
+        cb(null,'uploads');
+    },
+    filename: (_, file, cb) =>{
+        cb(null, file.originalname);
+    },
+});
 
+const upload = multer({ storage });
 
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 
-app.post('/auth/register', registerValidation, UserController.register);
-app.post('/auth/login', loginValidation, UserController.login);
+app.post('/auth/register', registerValidation, handleValidationsErrors, UserController.register);
+app.post('/auth/login', loginValidation, handleValidationsErrors, UserController.login);
 app.get('/auth/me', checkAuth, UserController.getMe);
+
+app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+    res.json({
+        url: `/uploads/${req.file.originalname}`,
+    });
+});
+
 
 app.get('/recipes', RecipeController.getAll);
 app.get('/recipes/:id', RecipeController.getOne);
-app.post('/recipes', checkAuth, recipeCreateValidation,RecipeController.create);
+app.post('/recipes', checkAuth, recipeCreateValidation, handleValidationsErrors, RecipeController.create);
 app.delete('/recipes/:id', checkAuth, RecipeController.remove);
-app.patch('/recipes/:id', checkAuth, RecipeController.update);
+app.patch('/recipes/:id', checkAuth, recipeCreateValidation, handleValidationsErrors, RecipeController.update);
 
 app.listen(4444,(err) => {
     if (err){
