@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {Navigate} from "react-router-dom";
 
@@ -13,6 +13,7 @@ import styles from "./Login.module.scss";
 import {fetchAuth, selectIsAuth} from "../../redux/slices/auth";
 
 export const Login = () => {
+    const [hover, setHover] = useState(false);
     const isAuth = useSelector(selectIsAuth);
     const dispatch = useDispatch();
     const {
@@ -61,7 +62,15 @@ export const Login = () => {
               helperText={errors.password?.message}
               {...register('password', {required: 'Укажите пароль'})}
               fullWidth />
-          <Button disabled={!isValid} type="submit" size="large" variant="contained" fullWidth>
+          <Button
+              style={{ backgroundColor: hover ? '#ae78ea' : '#888888' }}
+                  disabled={!isValid}
+              type="submit"
+              size="large"
+              variant="contained"
+              fullWidth
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}>
               Войти
           </Button>
       </form>
