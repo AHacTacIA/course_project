@@ -8,10 +8,11 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddRecipe.module.scss';
 import {useSelector} from "react-redux";
 import {selectIsAuth} from "../../redux/slices/auth";
-import {Navigate, useNavigate} from "react-router-dom";
+import {Navigate, useNavigate, useParams} from "react-router-dom";
 import axios from "../../axios";
 
 export const AddRecipe = () => {
+    const id = useParams();
     const navigate = useNavigate();
     const isAuth=useSelector(selectIsAuth);
     const [isLoading, setLoading] = React.useState(false);
@@ -20,6 +21,11 @@ export const AddRecipe = () => {
     const [tags, setTags] = React.useState('');
     const [imageUrl, setImageUrl] = React.useState('');
     const inputFileRef = React.useRef(null);
+
+    // const isEditing = Boolean(id);
+    // console.log(isEditing);
+    const isEditing = false;
+
 
   const handleChangeFile = async (event) => {
       try{
@@ -50,16 +56,29 @@ export const AddRecipe = () => {
               text,
               tags
           }
-          const {data} = await axios.post('/recipes', fields);
+          const {data} =isEditing
+              ?await axios.patch(`/recipes/${id}`, fields)
+              :await axios.post('/recipes', fields);
 
-          const id=data._id;
-          navigate(`/recipes/${id}`);
+          const _id = isEditing ? id : data._id;
+          navigate(`/recipes/${_id}`);
 
       } catch (err) {
           console.warn(err);
           alert('Не удалось загрузить рецепт!');
       }
   }
+
+  // React.useEffect(()=>{
+  //     if (id){
+  //         axios.get(`/recipes/${id}`).then(data => {
+  //             setTitle(data.title);
+  //             setText(data.text);
+  //             setTags(data.tags.join(','));
+  //             setImageUrl(data.imageUrl);
+  //         })
+  //     }
+  // },[]);
 
 
   const options = React.useMemo(
@@ -116,7 +135,7 @@ export const AddRecipe = () => {
       <SimpleMDE className={styles.editor} value={text} onChange={onChange} options={options} />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">
-          Опубликовать
+            {isEditing?'Сохранить':'Опубликовать'}
         </Button>
         <a href="/">
           <Button size="large">Отмена</Button>

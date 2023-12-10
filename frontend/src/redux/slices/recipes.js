@@ -5,9 +5,13 @@ export const fetchRecipes = createAsyncThunk('recipes/fetchRecipes', async() => 
     return data
 });
 
-export const fetchTags = createAsyncThunk('recipes/fetchRecipes', async() => {
+export const fetchTags = createAsyncThunk('recipes/fetchTags', async() => {
     const {data} = await axios.get('/tags');
     return data
+});
+
+export const fetchRemoveRecipes = createAsyncThunk('recipes/fetchRemoveRecipes', async(id) => {
+    await axios.delete(`/recipes/${id}`);
 });
 
 const initialState = {
@@ -26,6 +30,7 @@ const recipesSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: {
+        //Получение рецептов
         [fetchRecipes.pending]: (state) =>{
             state.recipes.items = [];
             state.recipes.status = 'loading';
@@ -38,18 +43,23 @@ const recipesSlice = createSlice({
             state.recipes.items = [];
             state.recipes.status = 'error';
         },
-        // [fetchTags.pending]: (state) =>{
-        //     state.tags.items = [];
-        //     state.tags.status = 'loading';
-        // },
-        // [fetchTags.fulfilled]: (state, action) =>{
-        //     state.tags.items = action.payload;
-        //     state.tags.status = 'loaded';
-        // },
-        // [fetchTags.rejected]: (state) =>{
-        //     state.tags.items = [];
-        //     state.tags.status = 'error';
-        // },
+        //Получение тегов
+        [fetchTags.pending]: (state) =>{
+            state.tags.items = [];
+            state.tags.status = 'loading';
+        },
+        [fetchTags.fulfilled]: (state, action) =>{
+            state.tags.items = action.payload;
+            state.tags.status = 'loaded';
+        },
+        [fetchTags.rejected]: (state) =>{
+            state.tags.items = [];
+            state.tags.status = 'error';
+        },
+        //Удаление рецептов
+        [fetchRemoveRecipes.pending]: (state, action) =>{
+            state.recipes.items = state.recipes.items.filter(obj => obj._id !== action.meta.arg);
+        },
     },
 });
 

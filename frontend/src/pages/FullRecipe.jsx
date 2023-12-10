@@ -5,6 +5,7 @@ import { Recipe } from "../components/Recipe";
 import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import axios from "../axios";
+import ReactMarkdown from "react-markdown";
 
 export const FullRecipe = () => {
     const [data, setData] = React.useState();
@@ -32,37 +33,37 @@ export const FullRecipe = () => {
       <Recipe
           _id={data._id}
           title={data.title}
-          imageUrl={data.imageUrl}
+          imageUrl={data.imageUrl?`http://localhost:4444${data.imageUrl}`:''}
           user={data.user}
           createdAt={data.createdAt}
           viewsCount={data.viewsCount}
-          commentsCount={3}
+          commentsCount={0}
           tags={data.tags}
         isFullPost
       >
-        <p>{data.text}</p>
+          <ReactMarkdown children={data.text} />
       </Recipe>
-      <CommentsBlock
-        items={[
-          {
-            user: {
-              fullName: "Вася Пупкин",
-              avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
-            },
-            text: "Это тестовый комментарий 555555",
-          },
-          {
-            user: {
-              fullName: "Иван Иванов",
-              avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
-            },
-            text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-          },
-        ]}
-        isLoading={false}
-      >
-        <Index />
-      </CommentsBlock>
+      {/*<CommentsBlock*/}
+      {/*  items={[*/}
+      {/*    {*/}
+      {/*      user: {*/}
+      {/*        fullName: "Вася Пупкин",*/}
+      {/*        avatarUrl: "https://mui.com/static/images/avatar/1.jpg",*/}
+      {/*      },*/}
+      {/*      text: "Это тестовый комментарий 555555",*/}
+      {/*    },*/}
+      {/*    {*/}
+      {/*      user: {*/}
+      {/*        fullName: "Иван Иванов",*/}
+      {/*        avatarUrl: "https://mui.com/static/images/avatar/2.jpg",*/}
+      {/*      },*/}
+      {/*      text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",*/}
+      {/*    },*/}
+      {/*  ]}*/}
+      {/*  isLoading={false}*/}
+      {/*>*/}
+      {/*  <Index />*/}
+      {/*</CommentsBlock>*/}
     </>
   );
 };
