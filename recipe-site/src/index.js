@@ -33,6 +33,7 @@ app.post('/auth/register', registerValidation, handleValidationsErrors, UserCont
 app.post('/auth/login', loginValidation, handleValidationsErrors, UserController.login);
 app.get('/auth/me', checkAuth, UserController.getMe);
 
+
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     res.json({
         url: `/uploads/${req.file.originalname}`,

@@ -10,6 +10,8 @@ import CommentIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import styles from './Recipe.module.scss';
 import { UserInfo } from '../UserInfo';
 import { RecipeSkeleton } from './Skeleton';
+import {useDispatch} from "react-redux";
+import {fetchRemoveRecipes} from "../../redux/slices/recipes";
 
 export const Recipe = ({
   _id,
@@ -25,11 +27,16 @@ export const Recipe = ({
   isLoading,
   isEditable,
 }) => {
+  const dispatch = useDispatch();
   if (isLoading) {
     return <RecipeSkeleton />;
   }
 
-  const onClickRemove = () => {};
+  const onClickRemove = () => {
+    if (window.confirm('Вы действительно хотите удалить рецепт?')){
+      dispatch(fetchRemoveRecipes(_id));
+    }
+  };
 
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
