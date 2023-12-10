@@ -12,6 +12,7 @@ import {fetchRecipes, fetchTags} from "../redux/slices/recipes";
 //
 export const Home = () => {
     const dispatch = useDispatch();
+    const userData = useSelector(state => state.auth.data);
     const { recipes, tags } = useSelector(state => state.recipes);
 
     const isRecipesLoading = recipes.status === 'loading';
@@ -42,7 +43,7 @@ export const Home = () => {
                   viewsCount={obj.viewsCount}
                   commentsCount={3}
                   tags={obj.tags}
-                  isEditable
+                  isEditable={userData?._id===obj.user._id}
               />
           ))}
         </Grid>
