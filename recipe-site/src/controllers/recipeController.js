@@ -69,7 +69,6 @@ export const getOne = async (req, res) => {
     }
 }
 
-
 export const remove = async (req, res) => {
     try {
         const recipeID = req.params.id;
@@ -121,7 +120,6 @@ export const remove = async (req, res) => {
     }
 }
 
-
 export const update = async (req, res) => {
     try {
         const recipeId = req.params.id;
@@ -164,3 +162,21 @@ export const update = async (req, res) => {
         });
     }
 };
+
+export const getLastTags = async (req, res) => {
+    try {
+        const recipes = await RecipeModel.find().limit(5).exec();
+
+        const tags = recipes
+            .map((obj) => obj.tags)
+            .flat()
+            .slice(0,5);
+
+        res.json(tags);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Failed to get recipes',
+        });
+    }
+}

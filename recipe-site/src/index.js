@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+import cors from 'cors';
 
 import {registerValidation, loginValidation, recipeCreateValidation} from './validations.js';
 import {checkAuth, handleValidationsErrors} from './utils/index.js';
@@ -24,6 +25,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json());
+app.use(cors());
 app.use('/uploads', express.static('uploads'));
 
 
@@ -38,6 +40,8 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 });
 
 
+app.get('/tags', RecipeController.getLastTags);
+app.get('/recipes/tags', RecipeController.getLastTags);
 app.get('/recipes', RecipeController.getAll);
 app.get('/recipes/:id', RecipeController.getOne);
 app.post('/recipes', checkAuth, recipeCreateValidation, handleValidationsErrors, RecipeController.create);
