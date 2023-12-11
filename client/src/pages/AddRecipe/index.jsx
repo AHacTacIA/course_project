@@ -12,7 +12,7 @@ import {Navigate, useNavigate, useParams} from "react-router-dom";
 import axios from "../../axios";
 
 export const AddRecipe = () => {
-    const id = useParams();
+    const id = useParams().id;
     const navigate = useNavigate();
     const isAuth=useSelector(selectIsAuth);
     const [isLoading, setLoading] = React.useState(false);
@@ -22,9 +22,7 @@ export const AddRecipe = () => {
     const [imageUrl, setImageUrl] = React.useState('');
     const inputFileRef = React.useRef(null);
 
-    // const isEditing = Boolean(id);
-    // console.log(isEditing);
-    const isEditing = false;
+    const isEditing = Boolean(id);
 
 
   const handleChangeFile = async (event) => {
@@ -69,16 +67,17 @@ export const AddRecipe = () => {
       }
   }
 
-  // React.useEffect(()=>{
-  //     if (id){
-  //         axios.get(`/recipes/${id}`).then(data => {
-  //             setTitle(data.title);
-  //             setText(data.text);
-  //             setTags(data.tags.join(','));
-  //             setImageUrl(data.imageUrl);
-  //         })
-  //     }
-  // },[]);
+  React.useEffect(()=>{
+      if (isEditing){
+          axios.get(`/recipes/${id}`).then(response => {
+              const data = response.data;
+              setTitle(data.title);
+              setText(data.text);
+              setTags(data.tags.join(','));
+              setImageUrl(data.imageUrl);
+          })
+      }
+  },[]);
 
 
   const options = React.useMemo(
